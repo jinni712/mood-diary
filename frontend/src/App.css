@@ -21,21 +21,79 @@ body {
 
 .app-header {
   text-align: center;
-  padding: 28px 20px 16px;
+  padding: 16px 20px 12px;
   background: linear-gradient(135deg, #ffe0f0 0%, #ffd6b0 100%);
 }
 
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .app-header h1 {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: 800;
   color: #444;
   letter-spacing: -0.5px;
 }
 
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+
+.user-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.logout-btn {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  background: #fff;
+  border: 1px solid #e8e0d8;
+  border-radius: 20px;
+  color: #999;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  border-color: #e8637a;
+  color: #e8637a;
+}
+
 .app-subtitle {
   color: #777;
-  font-size: 0.9rem;
-  margin-top: 4px;
+  font-size: 0.85rem;
+  margin-top: 6px;
+  text-align: center;
+}
+
+.app-loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #ffe0f0 0%, #ffd6b0 100%);
+  font-size: 3rem;
+}
+
+.app-loading p {
+  font-size: 1rem;
+  color: #888;
 }
 
 .tab-nav {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchEntry, saveEntry, deleteEntry } from '../api';
+import { fetchEntry, saveEntry, deleteEntry } from '../firestore';
 import './DiaryForm.css';
 
 export const EMOTIONS = [
@@ -14,7 +14,7 @@ export const EMOTIONS = [
 
 const SCORE_LABELS = ['', '매우 나쁨', '나쁨', '보통', '좋음', '매우 좋음'];
 
-export default function DiaryForm({ date, onDateChange }) {
+export default function DiaryForm({ userId, date, onDateChange }) {
   const [emotion, setEmotion] = useState(null);
   const [score, setScore] = useState(3);
   const [content, setContent] = useState('');
@@ -27,12 +27,12 @@ export default function DiaryForm({ date, onDateChange }) {
     setSaved(false);
     setMsg('');
     loadEntry();
-  }, [date]);
+  }, [date, userId]);
 
   async function loadEntry() {
     setLoading(true);
     try {
-      const entry = await fetchEntry(date);
+      const entry = await fetchEntry(userId, date);
       if (entry) {
         setExisting(entry);
         setEmotion(entry.emotion);
@@ -55,7 +55,7 @@ export default function DiaryForm({ date, onDateChange }) {
     if (!emotion) { setMsg('감정을 선택해주세요!'); return; }
     setLoading(true);
     try {
-      await saveEntry({ date, emotion, score, content });
+      await saveEntry(userId, { date, emotion, score, content });
       setSaved(true);
       setMsg('저장되었습니다 ✓');
       setTimeout(() => setMsg(''), 2000);
@@ -72,7 +72,7 @@ export default function DiaryForm({ date, onDateChange }) {
     if (!confirm('이 기록을 삭제할까요?')) return;
     setLoading(true);
     try {
-      await deleteEntry(date);
+      await deleteEntry(userId, date);
       setExisting(null);
       setEmotion(null);
       setScore(3);
@@ -153,11 +153,7 @@ export default function DiaryForm({ date, onDateChange }) {
       {msg && <p className="form-msg">{msg}</p>}
 
       <div className="form-actions">
-        <button
-          className="save-btn"
-          onClick={handleSave}
-          disabled={loading}
-        >
+        <button className="save-btn" onClick={handleSave} disabled={loading}>
           {loading ? '저장 중...' : saved ? '수정하기' : '저장하기'}
         </button>
         {existing && (

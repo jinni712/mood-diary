@@ -1,23 +1,23 @@
 import { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import { fetchEntries } from '../api';
+import { fetchEntries } from '../firestore';
 import { EMOTIONS } from './DiaryForm';
 import './CalendarView.css';
 
-export default function CalendarView({ onSelectDate }) {
+export default function CalendarView({ userId, onSelectDate }) {
   const [activeDate, setActiveDate] = useState(new Date());
   const [entryMap, setEntryMap] = useState({});
 
   useEffect(() => {
     loadMonth(activeDate);
-  }, [activeDate]);
+  }, [activeDate, userId]);
 
   async function loadMonth(date) {
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
     try {
-      const entries = await fetchEntries({ year, month });
+      const entries = await fetchEntries(userId, { year, month });
       const map = {};
       entries.forEach(e => { map[e.date] = e; });
       setEntryMap(map);

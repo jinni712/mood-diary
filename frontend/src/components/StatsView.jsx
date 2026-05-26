@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import {
-  PieChart, Pie, Cell, Tooltip, Legend,
+  PieChart, Pie, Cell, Tooltip,
   LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer
 } from 'recharts';
-import { fetchStats } from '../api';
+import { fetchStats } from '../firestore';
 import { EMOTIONS } from './DiaryForm';
 import './StatsView.css';
 
@@ -13,19 +13,19 @@ const PERIODS = [
   { value: 'year', label: '1년' },
 ];
 
-export default function StatsView() {
+export default function StatsView({ userId }) {
   const [period, setPeriod] = useState('month');
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadStats();
-  }, [period]);
+  }, [period, userId]);
 
   async function loadStats() {
     setLoading(true);
     try {
-      const data = await fetchStats(period);
+      const data = await fetchStats(userId, period);
       setStats(data);
     } finally {
       setLoading(false);
@@ -95,7 +95,8 @@ export default function StatsView() {
         <h3>감정 분포</h3>
         <ResponsiveContainer width="100%" height={220}>
           <PieChart>
-            <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={false}>
+            <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80}
+              label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={false}>
               {pieData.map((entry, i) => (
                 <Cell key={i} fill={entry.color} />
               ))}
@@ -113,10 +114,9 @@ export default function StatsView() {
               <CartesianGrid strokeDasharray="3 3" stroke="#f0ebe5" />
               <XAxis dataKey="date" tick={{ fontSize: 11 }} interval="preserveStartEnd" />
               <YAxis domain={[1, 5]} ticks={[1, 2, 3, 4, 5]} tick={{ fontSize: 11 }} />
-              <Tooltip
-                formatter={(v, n, props) => [`${v}점 ${props.payload.emoji}`, '기분']}
-              />
-              <Line type="monotone" dataKey="score" stroke="#e8637a" strokeWidth={2} dot={{ fill: '#e8637a', r: 4 }} activeDot={{ r: 6 }} />
+              <Tooltip formatter={(v, n, props) => [`${v}점 ${props.payload.emoji}`, '기분']} />
+              <Line type="monotone" dataKey="score" stroke="#e8637a" strokeWidth={2}
+                dot={{ fill: '#e8637a', r: 4 }} activeDot={{ r: 6 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
